@@ -1,0 +1,12 @@
+use yfinance to get data
+store data on google storage -- to give access to bucket create a iam service, assign role and download json key file, in local environment where code is running export GOOGLE_APPLICATION_CREDENTAIL = "path to json file"
+
+to run docker and airflow from GOOGLE_APPLICATION_CREDENTAIL
+
+1 docker compose up --build -d
+2 docker compose up
+
+For cleanup 
+docker compose down --remove-orphans 
+docker compose restart 
+

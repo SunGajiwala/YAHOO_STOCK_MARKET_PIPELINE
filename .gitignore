@@ -1,0 +1,5 @@
+airflow/keys/*
+airflow/logs/*
+airflow/config/*
+airflow/plugins/__pycache__
+airflow/dags/__pycache__
