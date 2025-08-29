@@ -1,63 +1,3 @@
-# from airflow import DAG
-# from airflow.operators.python import PythonOperator
-# from datetime import datetime, timedelta
-
-# # DAG Configuration
-# default_args = {
-#     'owner': 'sun',
-#     'retries': 1,
-#     'retry_delay': timedelta(minutes=5),
-#     'start_date': datetime(2025, 8, 22),
-#     'catchup': False
-# }
-
-# # Stock tickers to process
-# tickers = ["AAPL","HOOD"]
-
-# def fetch_and_store_stock(ticker):
-#     """Fetch and store stock data - imports done inside function to avoid DAG parsing issues"""
-#     import yfinance as yf
-#     from google.cloud import storage
-#     import datetime
-#     import pandas as pd
-    
-#     # Initialize GCP client
-#     storage_client = storage.Client()
-#     bucket_name = "stock_data_bucket_yahoo"
-#     bucket = storage_client.bucket(bucket_name)
-    
-#     def upload_to_gcs(df, ticker):
-#         ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S")
-#         blob_name = f"stock/{ticker}/{ts}.json"
-#         blob = bucket.blob(blob_name)
-#         blob.upload_from_string(df.to_json(orient="records"), content_type="application/json")
-#         print(f"Uploaded {blob_name}")
-    
-#     # Fetch stock data
-#     stock = yf.Ticker(ticker)
-#     df = stock.history(period="1d", interval="1m").tail(1)  # latest row
-#     upload_to_gcs(df, ticker)
-#     return f"Successfully processed {ticker}"
-
-# # Create DAG
-# with DAG(
-#     'yahoo_stock_pipeline',
-#     default_args=default_args,
-#     description='Fetch and store Yahoo Finance stock data',
-#     schedule='@hourly',
-#     tags=['stocks', 'yfinance', 'gcp']
-# ) as dag:
-
-#     # Create tasks dynamically for each ticker
-#     for ticker in tickers:
-#         PythonOperator(
-#             task_id=f'fetch_{ticker.lower()}',
-#             python_callable=fetch_and_store_stock,
-#             op_kwargs={'ticker': ticker},
-#             dag=dag
-#         ) 
-
-
 import os
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -102,7 +42,7 @@ def fetch_and_store_stock(ticker, **kwargs):
     return raw_blob_name
 
 def transform_to_parquet(ticker, **kwargs):
-    """Transform JSON (RAW) to Parquet (CURATED)"""
+    """Transform JSON (RAW) to Parquet (CURATED) with ticker column"""
     from google.cloud import storage
     import pandas as pd
     import io
@@ -118,6 +58,9 @@ def transform_to_parquet(ticker, **kwargs):
     raw_data = raw_blob.download_as_text()
     df = pd.read_json(io.StringIO(raw_data), orient="records")
 
+    # Add ticker column
+    df['ticker'] = ticker
+
     now = datetime.datetime.now(datetime.timezone.utc)
     date_str = now.strftime("%Y-%m-%d")
     ts_str = now.strftime("%Y%m%d_%H%M%S")
@@ -129,9 +72,9 @@ def transform_to_parquet(ticker, **kwargs):
     curated_blob.upload_from_string(parquet_buffer.getvalue(), content_type="application/octet-stream")
     print(f"Uploaded CURATED file: {curated_blob_name}")
 
-    # Push curated_blob_name to XCom
     ti.xcom_push(key='curated_blob_name', value=curated_blob_name)
     return curated_blob_name
+
 
 def load_to_bigquery(ticker, **kwargs):
     """Load Curated Parquet from GCS into BigQuery"""
