@@ -23,7 +23,7 @@ def fetch_and_store(ticker):
     upload_to_gcs(df, ticker)
 
 if __name__ == "__main__":
-    tickers = ["AAPL", "TSLA", "AMZN", "HOOD", "HIMS", "SHIB", "NVDA", "SOFI", "QQQ"]
+    tickers = ["AAPL", "HOOD"]
 
     for ticker in tickers:
         try:
