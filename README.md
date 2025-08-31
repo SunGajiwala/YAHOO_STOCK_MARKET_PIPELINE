@@ -1,6 +1,6 @@
 # Yahoo Stock Market Pipeline
 
-![Project Logo](https://via.placeholder.com/150)
+![Project Logo](images/EBC14E5D-41E5-4752-9B3B-A2DC66E4D046_1_102_o.jpeg)
 
 ## Overview
 
