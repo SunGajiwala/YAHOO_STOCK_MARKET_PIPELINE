@@ -1,14 +1,12 @@
 # Yahoo Stock Market Pipeline
 
-![Project Logo](images/EBC14E5D-41E5-4752-9B3B-A2DC66E4D046_1_102_o.jpeg)
-
 ## Overview
 
 The **Yahoo Stock Market Pipeline** is an end-to-end data engineering project designed to automate the extraction, transformation, and loading (ETL) of real-time stock market data into Google Cloud Platform (GCP). Leveraging tools like Apache Airflow, Google Cloud Storage, BigQuery, and the Yahoo Finance API, this pipeline facilitates scalable and efficient data processing for financial analytics.
 
 ## Architecture
 
-![Architecture Diagram](https://via.placeholder.com/800x400)
+![Architecture Diagram](images/EBC14E5D-41E5-4752-9B3B-A2DC66E4D046_1_102_o.jpeg)
 
 The pipeline follows a medallion architecture:
 
@@ -23,7 +21,6 @@ The pipeline follows a medallion architecture:
 * **Storage**: [Google Cloud Storage](https://cloud.google.com/storage)
 * **Data Warehousing**: [Google BigQuery](https://cloud.google.com/bigquery)
 * **Data Transformation**: [Pandas](https://pandas.pydata.org/), [Parquet](https://parquet.apache.org/)
-* **Visualization**: [Google Looker Studio](https://lookerstudio.google.com/)
 
 ## Pipeline Workflow
 
@@ -38,7 +35,7 @@ The pipeline follows a medallion architecture:
 ### Prerequisites
 
 * Python 3.12+
-* Apache Airflow 2.7+
+* Apache Airflow 3.0.4
 * Google Cloud SDK
 * GCP Project with BigQuery and Cloud Storage enabled
 * Service Account with appropriate IAM roles
@@ -80,24 +77,14 @@ The BigQuery dataset `stock_analytics` contains the following table:
   | close     | FLOAT64   |
   | volume    | INT64     |
 
-## Visualizations
-
-Dashboards have been created in Google Looker Studio to visualize:
-
-* Stock price trends over time
-* OHLC (Open, High, Low, Close) patterns
-* Volume analysis
 
 ## Future Enhancements
 
+* Dashboards for visualization in Looker Studio 
 * Implement dbt for data transformations.
 * Integrate real-time data streaming.
 * Add anomaly detection for stock price fluctuations.
 * Expand to include additional financial indicators.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
